@@ -1,17 +1,19 @@
-package ru.practicum.shareit.item.model;
+package ru.practicum.shareit.user.model;
 
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.experimental.FieldDefaults;
 
 @Data
 @Builder
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class Item {
+@EqualsAndHashCode(of = {"email"})
+public class User {
     long id;
-    long userId;
+
     String name;
-    String description;
-    boolean available;
+
+    String email;
 }
