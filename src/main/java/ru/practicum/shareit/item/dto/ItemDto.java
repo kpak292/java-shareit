@@ -1,14 +1,15 @@
 package ru.practicum.shareit.item.dto;
 
 import jakarta.validation.constraints.NotBlank;
-import lombok.AccessLevel;
-import lombok.Builder;
-import lombok.Data;
+import jakarta.validation.constraints.NotNull;
+import lombok.*;
 import lombok.experimental.FieldDefaults;
 
 @Data
 @Builder
 @FieldDefaults(level = AccessLevel.PRIVATE)
+@AllArgsConstructor
+@NoArgsConstructor
 public class ItemDto {
     Long id;
     @NotBlank
@@ -17,5 +18,6 @@ public class ItemDto {
     @NotBlank
     String description;
 
+    @NotNull
     Boolean available;
 }

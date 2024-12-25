@@ -19,19 +19,19 @@ public class UserServiceImpl implements UserService {
     @Override
     public Collection<UserDto> findAll() {
         return userRepository.findAll().stream()
-                .map(UserMapper::getUserDto)
+                .map(UserMapper.INSTANCE::getUserDto)
                 .toList();
     }
 
     @Override
     public UserDto findById(long id) {
-        return UserMapper.getUserDto(userRepository.findById(id));
+        return UserMapper.INSTANCE.getUserDto(userRepository.findById(id));
     }
 
     @Override
     public UserDto create(UserDto userDto) {
-        User user = UserMapper.getUser(userDto);
-        return UserMapper.getUserDto(userRepository.create(user));
+        User user = UserMapper.INSTANCE.getUser(userDto);
+        return UserMapper.INSTANCE.getUserDto(userRepository.create(user));
     }
 
     @Override
@@ -46,11 +46,11 @@ public class UserServiceImpl implements UserService {
             user.setEmail(userDto.getEmail());
         }
 
-        return UserMapper.getUserDto(userRepository.update(user));
+        return UserMapper.INSTANCE.getUserDto(userRepository.update(user));
     }
 
     @Override
     public UserDto remove(long id) {
-        return UserMapper.getUserDto(userRepository.remove(id));
+        return UserMapper.INSTANCE.getUserDto(userRepository.remove(id));
     }
 }

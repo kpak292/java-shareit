@@ -22,10 +22,8 @@ public class UserController {
 
     @GetMapping()
     public ResponseEntity<Collection<UserDto>> findAll() {
-        log.info("Request: GET/users");
-
         Collection<UserDto> users = userService.findAll();
-        log.info("Response: GET/users with body {}", users);
+        log.info("GET/users with response {}", users);
 
         return new ResponseEntity<>(
                 users,
@@ -35,10 +33,8 @@ public class UserController {
 
     @GetMapping("/{id}")
     public ResponseEntity<UserDto> getById(@PathVariable long id) {
-        log.info("Request: GET/users/{}", id);
-
         UserDto userDto = userService.findById(id);
-        log.info("Response: GET/users/{} with body {}", id, userDto);
+        log.info("Response: GET/users/{} with response {}", id, userDto);
 
         return new ResponseEntity<>(
                 userDto,
@@ -47,10 +43,8 @@ public class UserController {
 
     @PostMapping()
     public ResponseEntity<UserDto> create(@Valid @RequestBody UserDto userDto) {
-        log.info("Request: POST/users with body {}", userDto);
-
         UserDto user = userService.create(userDto);
-        log.info("Response: POST/users with body {}", user);
+        log.info("POST/users with response {}", user);
 
         return new ResponseEntity<>(
                 user,
@@ -59,10 +53,8 @@ public class UserController {
 
     @PatchMapping("/{id}")
     public ResponseEntity<UserDto> update(@PathVariable long id, @RequestBody UserDto userDto) {
-        log.info("Request: PATCH/users/{} with body {}", id, userDto);
-
         UserDto user = userService.update(id, userDto);
-        log.info("Response: PATCH/users{} with body {}", id, user);
+        log.info("PATCH/users{} with response {}", id, user);
 
         return new ResponseEntity<>(
                 user,
@@ -71,10 +63,8 @@ public class UserController {
 
     @DeleteMapping("/{id}")
     public ResponseEntity<UserDto> remove(@PathVariable long id) {
-        log.info("Request: DELETE/users/{}", id);
-
         UserDto user = userService.remove(id);
-        log.info("Response: DELETE/users/{} with body {}", id, user);
+        log.info("DELETE/users/{} with response {}", id, user);
 
         return new ResponseEntity<>(
                 user,
