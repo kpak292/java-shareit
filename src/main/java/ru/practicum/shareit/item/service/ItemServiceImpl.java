@@ -9,6 +9,8 @@ import ru.practicum.shareit.item.dto.ItemDto;
 import ru.practicum.shareit.item.dto.ItemMapper;
 import ru.practicum.shareit.item.entity.Item;
 import ru.practicum.shareit.item.repository.ItemRepository;
+import ru.practicum.shareit.user.dto.UserMapper;
+import ru.practicum.shareit.user.entity.User;
 import ru.practicum.shareit.user.service.UserService;
 
 import java.util.Collection;
@@ -56,10 +58,10 @@ public class ItemServiceImpl implements ItemService {
 
     @Override
     public ItemDto create(ItemDto itemDto, long userId) {
-        userService.findById(userId);
+        User user = UserMapper.INSTANCE.getUser(userService.findById(userId));
 
         Item item = ItemMapper.INSTANCE.getItem(itemDto);
-        item.setUserId(userId);
+        item.setUser(user);
 
         return ItemMapper.INSTANCE.getItemDto(itemRepository.save(item));
     }
@@ -70,10 +72,6 @@ public class ItemServiceImpl implements ItemService {
         Item item = itemRepository.findByIdAndUserId(id, userId)
                 .orElseThrow(() -> new NotFoundException("Item is not found with id = " + id +
                         "related to user with id = " + userId));
-
-        if (item.getUserId() != userId) {
-            throw new UnauthorizedAccessException("User " + userId + "has no rights to change item " + id);
-        }
 
         if (itemDto.getDescription() != null) {
             item.setDescription(itemDto.getDescription());

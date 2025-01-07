@@ -3,6 +3,7 @@ package ru.practicum.shareit.item.entity;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
+import ru.practicum.shareit.user.entity.User;
 
 @Entity
 @Table(name = "items", schema = "public")
@@ -16,8 +17,9 @@ public class Item {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     long id;
 
-    @Column(name = "user_id", nullable = false)
-    long userId;
+    @ManyToOne
+    @JoinColumn(name = "user_id")
+    User user;
 
     @Column(name = "name", nullable = false)
     String name;
