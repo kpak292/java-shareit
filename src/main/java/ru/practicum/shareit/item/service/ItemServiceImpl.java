@@ -3,19 +3,20 @@ package ru.practicum.shareit.item.service;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
+import ru.practicum.shareit.exceptions.NotFoundException;
 import ru.practicum.shareit.exceptions.UnauthorizedAccessException;
 import ru.practicum.shareit.item.dto.ItemDto;
 import ru.practicum.shareit.item.dto.ItemMapper;
-import ru.practicum.shareit.item.model.Item;
+import ru.practicum.shareit.item.entity.Item;
 import ru.practicum.shareit.item.repository.ItemRepository;
 import ru.practicum.shareit.user.service.UserService;
 
 import java.util.Collection;
+import java.util.List;
 
 @Service("itemServiceV1")
 public class ItemServiceImpl implements ItemService {
     @Autowired
-    @Qualifier("inMemoryItemRepository")
     private ItemRepository itemRepository;
 
     @Autowired
@@ -27,7 +28,7 @@ public class ItemServiceImpl implements ItemService {
     public Collection<ItemDto> findAllByUser(long userId) {
         userService.findById(userId);
 
-        return itemRepository.findAllByUser(userId).stream()
+        return itemRepository.findByUserId(userId).stream()
                 .map(ItemMapper.INSTANCE::getItemDto)
                 .toList();
     }
@@ -36,12 +37,19 @@ public class ItemServiceImpl implements ItemService {
     public ItemDto findById(long id, long userId) {
         userService.findById(userId);
 
-        return ItemMapper.INSTANCE.getItemDto(itemRepository.findById(id));
+        return ItemMapper.INSTANCE.getItemDto(itemRepository.findByIdAndUserId(id, userId)
+                .orElseThrow(() -> new NotFoundException("Item is not found with id = " + id +
+                        "related to user with id = " + userId)));
     }
 
     @Override
     public Collection<ItemDto> findByText(String text) {
-        return itemRepository.findByText(text).stream()
+        if (text==null||text.isBlank()){
+            return List.of();
+        }
+
+        return itemRepository.findByNameContainingIgnoreCaseOrDescriptionContainingIgnoreCase(text, text).stream()
+                .filter(Item::isAvailable)
                 .map(ItemMapper.INSTANCE::getItemDto)
                 .toList();
     }
@@ -53,13 +61,15 @@ public class ItemServiceImpl implements ItemService {
         Item item = ItemMapper.INSTANCE.getItem(itemDto);
         item.setUserId(userId);
 
-        return ItemMapper.INSTANCE.getItemDto(itemRepository.create(item));
+        return ItemMapper.INSTANCE.getItemDto(itemRepository.save(item));
     }
 
     @Override
     public ItemDto update(long id, ItemDto itemDto, long userId) {
         userService.findById(userId);
-        Item item = itemRepository.findById(id);
+        Item item = itemRepository.findByIdAndUserId(id, userId)
+                .orElseThrow(() -> new NotFoundException("Item is not found with id = " + id +
+                        "related to user with id = " + userId));
 
         if (item.getUserId() != userId) {
             throw new UnauthorizedAccessException("User " + userId + "has no rights to change item " + id);
@@ -77,18 +87,18 @@ public class ItemServiceImpl implements ItemService {
             item.setAvailable(itemDto.getAvailable());
         }
 
-        return ItemMapper.INSTANCE.getItemDto(itemRepository.update(item));
+        return ItemMapper.INSTANCE.getItemDto(itemRepository.save(item));
     }
 
     @Override
     public ItemDto remove(long id, long userId) {
         userService.findById(userId);
-        Item item = itemRepository.findById(id);
+        Item item = itemRepository.findByIdAndUserId(id, userId)
+                .orElseThrow(() -> new NotFoundException("Item is not found with id = " + id +
+                        "related to user with id = " + userId));
 
-        if (item.getUserId() != userId) {
-            throw new UnauthorizedAccessException("User " + userId + "has no rights to change item " + id);
-        }
+        itemRepository.deleteById(id);
 
-        return ItemMapper.INSTANCE.getItemDto(itemRepository.remove(id));
+        return ItemMapper.INSTANCE.getItemDto(item);
     }
 }
