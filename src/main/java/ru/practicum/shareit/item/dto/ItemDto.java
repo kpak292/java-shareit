@@ -4,6 +4,9 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
+import ru.practicum.shareit.booking.dto.BookingDto;
+
+import java.util.Collection;
 
 @Data
 @Builder
@@ -12,6 +15,7 @@ import lombok.experimental.FieldDefaults;
 @NoArgsConstructor
 public class ItemDto {
     Long id;
+
     @NotBlank
     String name;
 
@@ -20,4 +24,10 @@ public class ItemDto {
 
     @NotNull
     Boolean available;
+
+    Collection<CommentDto> comments;
+
+    BookingDto lastBooking;
+
+    BookingDto nextBooking;
 }

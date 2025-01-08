@@ -19,6 +19,27 @@ items{
     boolean available
 }
 
+bookings{
+    bigint id PK
+    bigint user_id FK
+    bigint item_id FK
+    timestamp booking_start
+    timestamp booking_end
+    varchar(100) state
+}
+
+comments{
+    bigint id PK
+    bigint user_id FK
+    bigint item_id FK
+    varchar(255) comment
+    timestamp created_at
+}
+
 users ||--o{ items: user_id
+users ||--o{ bookings: user_id
+items ||--o{ bookings: item_id
+users ||--o{ comments: user_id
+items ||--o{ comments: item_id
 
 ```
