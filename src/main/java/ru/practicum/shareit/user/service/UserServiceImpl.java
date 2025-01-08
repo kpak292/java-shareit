@@ -2,7 +2,7 @@ package ru.practicum.shareit.user.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import ru.practicum.shareit.exceptions.NotFoundException;
+import ru.practicum.shareit.booking.dto.exceptions.NotFoundException;
 import ru.practicum.shareit.user.dto.UserDto;
 import ru.practicum.shareit.user.dto.UserMapper;
 import ru.practicum.shareit.user.entity.User;
@@ -26,6 +26,12 @@ public class UserServiceImpl implements UserService {
     public UserDto findById(long id) {
         return UserMapper.INSTANCE.getUserDto(userRepository.findById(id).
                 orElseThrow(() -> new NotFoundException("User is not found with id = " + id)));
+    }
+
+    @Override
+    public User findUserById(long id) {
+        return userRepository.findById(id).
+                orElseThrow(() -> new NotFoundException("User is not found with id = " + id));
     }
 
     @Override

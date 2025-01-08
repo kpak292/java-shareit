@@ -2,17 +2,25 @@ package ru.practicum.shareit.item.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
-import ru.practicum.shareit.exceptions.NotFoundException;
-import ru.practicum.shareit.exceptions.UnauthorizedAccessException;
+import ru.practicum.shareit.booking.dto.BookingDto;
+import ru.practicum.shareit.booking.dto.exceptions.NotAvailableException;
+import ru.practicum.shareit.booking.dto.exceptions.NotFoundException;
+import ru.practicum.shareit.booking.service.BookingService;
+import ru.practicum.shareit.item.dto.CommentDto;
+import ru.practicum.shareit.item.dto.CommentMapper;
 import ru.practicum.shareit.item.dto.ItemDto;
 import ru.practicum.shareit.item.dto.ItemMapper;
+import ru.practicum.shareit.item.entity.Comment;
 import ru.practicum.shareit.item.entity.Item;
+import ru.practicum.shareit.item.repository.CommentRepository;
 import ru.practicum.shareit.item.repository.ItemRepository;
 import ru.practicum.shareit.user.dto.UserMapper;
 import ru.practicum.shareit.user.entity.User;
 import ru.practicum.shareit.user.service.UserService;
 
+import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.List;
 
@@ -22,16 +30,24 @@ public class ItemServiceImpl implements ItemService {
     private ItemRepository itemRepository;
 
     @Autowired
+    private CommentRepository commentRepository;
+
+    @Autowired
     @Qualifier("userServiceV1")
     private UserService userService;
+
+    @Autowired
+    @Qualifier("bookingServiceV1")
+    @Lazy
+    private BookingService bookingService;
 
 
     @Override
     public Collection<ItemDto> findAllByUser(long userId) {
-        userService.findById(userId);
+        User host = userService.findUserById(userId);
 
-        return itemRepository.findByUserId(userId).stream()
-                .map(ItemMapper.INSTANCE::getItemDto)
+        return itemRepository.findByHost(host).stream()
+                .map(this::loadCommentsAndBookings)
                 .toList();
     }
 
@@ -39,14 +55,21 @@ public class ItemServiceImpl implements ItemService {
     public ItemDto findById(long id, long userId) {
         userService.findById(userId);
 
-        return ItemMapper.INSTANCE.getItemDto(itemRepository.findByIdAndUserId(id, userId)
-                .orElseThrow(() -> new NotFoundException("Item is not found with id = " + id +
-                        "related to user with id = " + userId)));
+        Item item = itemRepository.findById(id)
+                .orElseThrow(() -> new NotFoundException("Item is not found with id = " + id));
+
+        return loadCommentsAndBookings(item);
+    }
+
+    @Override
+    public Item findItemById(long id) {
+        return itemRepository.findById(id)
+                .orElseThrow(() -> new NotFoundException("Item is not found with id = " + id));
     }
 
     @Override
     public Collection<ItemDto> findByText(String text) {
-        if (text==null||text.isBlank()){
+        if (text == null || text.isBlank()) {
             return List.of();
         }
 
@@ -58,18 +81,20 @@ public class ItemServiceImpl implements ItemService {
 
     @Override
     public ItemDto create(ItemDto itemDto, long userId) {
-        User user = UserMapper.INSTANCE.getUser(userService.findById(userId));
+        User user = userService.findUserById(userId);
+
+        UserMapper.INSTANCE.getUser(userService.findById(userId));
 
         Item item = ItemMapper.INSTANCE.getItem(itemDto);
-        item.setUser(user);
+        item.setHost(user);
 
         return ItemMapper.INSTANCE.getItemDto(itemRepository.save(item));
     }
 
     @Override
     public ItemDto update(long id, ItemDto itemDto, long userId) {
-        userService.findById(userId);
-        Item item = itemRepository.findByIdAndUserId(id, userId)
+        User host = userService.findUserById(userId);
+        Item item = itemRepository.findByIdAndHost(id, host)
                 .orElseThrow(() -> new NotFoundException("Item is not found with id = " + id +
                         "related to user with id = " + userId));
 
@@ -90,13 +115,54 @@ public class ItemServiceImpl implements ItemService {
 
     @Override
     public ItemDto remove(long id, long userId) {
-        userService.findById(userId);
-        Item item = itemRepository.findByIdAndUserId(id, userId)
+        User host = userService.findUserById(userId);
+
+        Item item = itemRepository.findByIdAndHost(id, host)
                 .orElseThrow(() -> new NotFoundException("Item is not found with id = " + id +
                         "related to user with id = " + userId));
 
         itemRepository.deleteById(id);
 
         return ItemMapper.INSTANCE.getItemDto(item);
+    }
+
+    @Override
+    public CommentDto addComment(long itemId, CommentDto commentDto, long userId) {
+        //Check user exists
+        User author = userService.findUserById(userId);
+
+        //Check item exists
+        Item item = itemRepository.findById(itemId)
+                .orElseThrow(() -> new NotFoundException("Item is not found with id = " + itemId));
+
+        Collection<BookingDto> bookingDtos = bookingService.findByItemAndUser(author, item);
+
+        if (bookingDtos.isEmpty()) {
+            throw new NotAvailableException("User does not have PAST bookings of this Item");
+        }
+
+        Comment comment = CommentMapper.INSTANCE.getComment(commentDto);
+
+        comment.setItem(item);
+        comment.setAuthor(author);
+        comment.setCreated(LocalDateTime.now());
+
+        comment = commentRepository.save(comment);
+
+        return CommentMapper.INSTANCE.getCommentDto(comment);
+    }
+
+    private ItemDto loadCommentsAndBookings(Item item) {
+        Collection<Comment> comments = commentRepository.findAllByItem(item);
+
+        ItemDto itemDto = ItemMapper.INSTANCE.getItemDto(item);
+        itemDto.setComments(comments.stream()
+                .map(CommentMapper.INSTANCE::getCommentDto)
+                .toList());
+
+        itemDto.setLastBooking(bookingService.findLastBooking(item));
+        itemDto.setNextBooking(bookingService.findNextBooking(item));
+
+        return itemDto;
     }
 }
