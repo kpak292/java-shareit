@@ -53,7 +53,7 @@ public class ItemServiceImpl implements ItemService {
 
     @Override
     public ItemDto findById(long id, long userId) {
-        userService.findById(userId);
+        //userService.findById(userId);
 
         Item item = itemRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException("Item is not found with id = " + id));
