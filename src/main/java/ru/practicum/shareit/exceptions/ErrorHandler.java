@@ -30,7 +30,7 @@ public class ErrorHandler {
     }
 
     @ExceptionHandler
-    public ErrorResponse NotAvailableHandler(final NotAvailableException e) {
+    public ErrorResponse notAvailableHandler(final NotAvailableException e) {
         log.error(e.getMessage());
         return ErrorResponse.create(e, HttpStatus.BAD_REQUEST, e.getMessage());
     }

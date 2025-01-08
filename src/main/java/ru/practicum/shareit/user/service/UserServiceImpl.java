@@ -24,14 +24,14 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public UserDto findById(long id) {
-        return UserMapper.INSTANCE.getUserDto(userRepository.findById(id).
-                orElseThrow(() -> new NotFoundException("User is not found with id = " + id)));
+        return UserMapper.INSTANCE.getUserDto(userRepository.findById(id)
+                .orElseThrow(() -> new NotFoundException("User is not found with id = " + id)));
     }
 
     @Override
     public User findUserById(long id) {
-        return userRepository.findById(id).
-                orElseThrow(() -> new NotFoundException("User is not found with id = " + id));
+        return userRepository.findById(id)
+                .orElseThrow(() -> new NotFoundException("User is not found with id = " + id));
     }
 
     @Override
