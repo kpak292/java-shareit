@@ -21,8 +21,8 @@ import ru.practicum.shareit.user.service.UserService;
 
 import java.time.LocalDateTime;
 import java.util.Collection;
-import java.util.Comparator;
 import java.util.List;
+import java.util.Optional;
 
 @Service("bookingServiceV1")
 public class BookingServiceImpl implements BookingService {
@@ -173,35 +173,18 @@ public class BookingServiceImpl implements BookingService {
     }
 
     @Override
-    public BookingDto findLastBooking(Item item) {
+    public Optional<Booking> findLastBooking(Item item) {
         //Добавил минус 1 день, тк по моей логике подтягивается бронирование по которому комментарий ставили
         // (что по сути является PAST)
-        Collection<Booking> bookings = bookingRepository.getAllByItemAndStatusAndEndBefore(item, State.APPROVED,
+        return bookingRepository.findFirstByItemAndStatusAndEndBeforeOrderByEndDesc(item,
+                State.APPROVED,
                 LocalDateTime.now().minusDays(1));
-
-        if (bookings.isEmpty()) {
-            return null;
-        } else {
-            return bookings.stream()
-                    .map(BookingMapper.INSTANCE::getBookingDto)
-                    .max(Comparator.comparing(BookingDto::getEnd))
-                    .get();
-        }
-
     }
 
     @Override
-    public BookingDto findNextBooking(Item item) {
-        Collection<Booking> bookings = bookingRepository.getAllByItemAndStatusAndStartAfter(item, State.APPROVED,
+    public Optional<Booking> findNextBooking(Item item) {
+        return bookingRepository.findFirstByItemAndStatusAndStartAfterOrderByStartAsc(item,
+                State.APPROVED,
                 LocalDateTime.now());
-
-        if (bookings.isEmpty()) {
-            return null;
-        } else {
-            return bookings.stream()
-                    .map(BookingMapper.INSTANCE::getBookingDto)
-                    .min(Comparator.comparing(BookingDto::getStart))
-                    .get();
-        }
     }
 }

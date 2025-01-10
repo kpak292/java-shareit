@@ -5,6 +5,8 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 import ru.practicum.shareit.booking.dto.BookingDto;
+import ru.practicum.shareit.booking.dto.BookingMapper;
+import ru.practicum.shareit.booking.entity.Booking;
 import ru.practicum.shareit.booking.service.BookingService;
 import ru.practicum.shareit.exceptions.NotAvailableException;
 import ru.practicum.shareit.exceptions.NotFoundException;
@@ -23,6 +25,7 @@ import ru.practicum.shareit.user.service.UserService;
 import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.List;
+import java.util.Optional;
 
 @Service("itemServiceV1")
 public class ItemServiceImpl implements ItemService {
@@ -160,8 +163,11 @@ public class ItemServiceImpl implements ItemService {
                 .map(CommentMapper.INSTANCE::getCommentDto)
                 .toList());
 
-        itemDto.setLastBooking(bookingService.findLastBooking(item));
-        itemDto.setNextBooking(bookingService.findNextBooking(item));
+        Optional<Booking> last = bookingService.findLastBooking(item);
+        last.ifPresent(booking -> itemDto.setLastBooking(BookingMapper.INSTANCE.getBookingDto(booking)));
+
+        Optional<Booking> next = bookingService.findNextBooking(item);
+        last.ifPresent(booking -> itemDto.setNextBooking(BookingMapper.INSTANCE.getBookingDto(booking)));
 
         return itemDto;
     }

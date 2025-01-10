@@ -1,10 +1,13 @@
 package ru.practicum.shareit.booking.dto;
 
+import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
 import org.mapstruct.Mapper;
 import org.mapstruct.factory.Mappers;
 import ru.practicum.shareit.booking.entity.Booking;
 
 import java.util.Collection;
+
 
 @Mapper
 public interface BookingMapper {

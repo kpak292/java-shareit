@@ -9,6 +9,7 @@ import ru.practicum.shareit.user.entity.User;
 
 import java.time.LocalDateTime;
 import java.util.Collection;
+import java.util.Optional;
 
 public interface BookingRepository extends JpaRepository<Booking, Long>, QuerydslPredicateExecutor<Booking> {
     Collection<Booking> getAllByBooker(User booker);
@@ -27,7 +28,7 @@ public interface BookingRepository extends JpaRepository<Booking, Long>, Queryds
                                                                    State state,
                                                                    LocalDateTime end);
 
-    Collection<Booking> getAllByItemAndStatusAndEndBefore(Item item, State state, LocalDateTime localDateTime);
+    Optional<Booking> findFirstByItemAndStatusAndEndBeforeOrderByEndDesc(Item item, State state, LocalDateTime localDateTime);
 
-    Collection<Booking> getAllByItemAndStatusAndStartAfter(Item item, State state, LocalDateTime localDateTime);
+    Optional<Booking> findFirstByItemAndStatusAndStartAfterOrderByStartAsc(Item item, State state, LocalDateTime localDateTime);
 }

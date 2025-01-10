@@ -2,7 +2,7 @@ package ru.practicum.shareit.booking.dto;
 
 import jakarta.annotation.Nullable;
 import jakarta.validation.constraints.AssertTrue;
-import jakarta.validation.constraints.Future;
+import jakarta.validation.constraints.FutureOrPresent;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
@@ -28,11 +28,11 @@ public class BookingDto {
     ItemDto item;
 
     @NotNull(message = "Start cannot be null")
-    @Future(message = "Start date cannot be in past")
+    @FutureOrPresent(message = "Start date cannot be in past")
     LocalDateTime start;
 
     @NotNull(message = "End cannot be null")
-    @Future(message = "End date cannot be in past")
+    @FutureOrPresent(message = "End date cannot be in past")
     LocalDateTime end;
 
     State status;
