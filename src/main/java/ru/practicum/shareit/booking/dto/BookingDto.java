@@ -27,6 +27,7 @@ public class BookingDto {
 
     ItemDto item;
 
+    //Иногда дает ощибку валидации при постман тестах!!!
     @NotNull(message = "Start cannot be null")
     @FutureOrPresent(message = "Start date cannot be in past")
     LocalDateTime start;
