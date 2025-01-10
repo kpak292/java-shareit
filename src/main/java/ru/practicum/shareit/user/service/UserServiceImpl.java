@@ -1,11 +1,11 @@
 package ru.practicum.shareit.user.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
+import ru.practicum.shareit.exceptions.NotFoundException;
 import ru.practicum.shareit.user.dto.UserDto;
 import ru.practicum.shareit.user.dto.UserMapper;
-import ru.practicum.shareit.user.model.User;
+import ru.practicum.shareit.user.entity.User;
 import ru.practicum.shareit.user.repository.UserRepository;
 
 import java.util.Collection;
@@ -13,7 +13,6 @@ import java.util.Collection;
 @Service("userServiceV1")
 public class UserServiceImpl implements UserService {
     @Autowired
-    @Qualifier("inMemoryUserRepository")
     private UserRepository userRepository;
 
     @Override
@@ -25,18 +24,26 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public UserDto findById(long id) {
-        return UserMapper.INSTANCE.getUserDto(userRepository.findById(id));
+        return UserMapper.INSTANCE.getUserDto(userRepository.findById(id)
+                .orElseThrow(() -> new NotFoundException("User is not found with id = " + id)));
+    }
+
+    @Override
+    public User findUserById(long id) {
+        return userRepository.findById(id)
+                .orElseThrow(() -> new NotFoundException("User is not found with id = " + id));
     }
 
     @Override
     public UserDto create(UserDto userDto) {
         User user = UserMapper.INSTANCE.getUser(userDto);
-        return UserMapper.INSTANCE.getUserDto(userRepository.create(user));
+        return UserMapper.INSTANCE.getUserDto(userRepository.save(user));
     }
 
     @Override
     public UserDto update(long id, UserDto userDto) {
-        User user = userRepository.findById(id);
+        User user = userRepository.findById(id)
+                .orElseThrow(() -> new NotFoundException("User is not found with id = " + id));
 
         if (userDto.getName() != null) {
             user.setName(userDto.getName());
@@ -46,11 +53,16 @@ public class UserServiceImpl implements UserService {
             user.setEmail(userDto.getEmail());
         }
 
-        return UserMapper.INSTANCE.getUserDto(userRepository.update(user));
+        return UserMapper.INSTANCE.getUserDto(userRepository.save(user));
     }
 
     @Override
     public UserDto remove(long id) {
-        return UserMapper.INSTANCE.getUserDto(userRepository.remove(id));
+        User user = userRepository.findById(id)
+                .orElseThrow(() -> new NotFoundException("User is not found with id = " + id));
+
+        userRepository.deleteById(id);
+
+        return UserMapper.INSTANCE.getUserDto(user);
     }
 }
