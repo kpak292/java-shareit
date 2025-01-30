@@ -18,7 +18,8 @@ import ru.practicum.shareit.item.entity.Comment;
 import ru.practicum.shareit.item.entity.Item;
 import ru.practicum.shareit.item.repository.CommentRepository;
 import ru.practicum.shareit.item.repository.ItemRepository;
-import ru.practicum.shareit.user.dto.UserMapper;
+import ru.practicum.shareit.request.entity.ItemRequest;
+import ru.practicum.shareit.request.service.ItemRequestService;
 import ru.practicum.shareit.user.entity.User;
 import ru.practicum.shareit.user.service.UserService;
 
@@ -43,6 +44,11 @@ public class ItemServiceImpl implements ItemService {
     @Qualifier("bookingServiceV1")
     @Lazy
     private BookingService bookingService;
+
+    @Autowired
+    @Qualifier("itemRequestServiceV1")
+    @Lazy
+    ItemRequestService requestService;
 
 
     @Override
@@ -86,12 +92,19 @@ public class ItemServiceImpl implements ItemService {
     public ItemDto create(ItemDto itemDto, long userId) {
         User user = userService.findUserById(userId);
 
-        UserMapper.INSTANCE.getUser(userService.findById(userId));
-
         Item item = ItemMapper.INSTANCE.getItem(itemDto);
         item.setHost(user);
 
-        return ItemMapper.INSTANCE.getItemDto(itemRepository.save(item));
+        item = itemRepository.save(item);
+
+        if (itemDto.getRequestId() != null) {
+            //Check request exists
+            ItemRequest itemRequest = requestService.getbyId(itemDto.getRequestId());
+
+            requestService.create(item, itemRequest);
+        }
+
+        return ItemMapper.INSTANCE.getItemDto(item);
     }
 
     @Override
