@@ -53,7 +53,7 @@ public class UserController {
     @PatchMapping("/{id}")
     public ResponseEntity<UserDto> update(@PathVariable long id, @RequestBody UserDto userDto) {
         UserDto user = userService.update(id, userDto);
-        log.info("PATCH/users{} with response {}", id, user);
+        log.info("PATCH/users/{} with response {}", id, user);
 
         return new ResponseEntity<>(
                 user,

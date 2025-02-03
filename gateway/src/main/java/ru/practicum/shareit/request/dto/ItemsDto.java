@@ -1,20 +1,24 @@
 package ru.practicum.shareit.request.dto;
 
-import lombok.*;
-import lombok.experimental.FieldDefaults;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
 
-@Data
-@Builder
-@FieldDefaults(level = AccessLevel.PRIVATE)
-@AllArgsConstructor
+@Getter
 @NoArgsConstructor
-public class RequestItemsDto {
+@AllArgsConstructor
+public class ItemsDto {
     long id;
+
     long requestId;
+
     long itemId;
+
     String itemName;
+
     long hostId;
+
     LocalDateTime created;
 }

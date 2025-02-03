@@ -1,5 +1,6 @@
 package ru.practicum.shareit.booking.dto;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.annotation.Nullable;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
@@ -16,28 +17,12 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 public class BookingDto {
     long id;
-
     UserDto booker;
-
-    @Nullable
     Long itemId;
-
     ItemDto item;
-
-    //Иногда дает ощибку валидации при постман тестах!!!
-
+    @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss")
     LocalDateTime start;
-
-
+    @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss")
     LocalDateTime end;
-
     State status;
-
-    private boolean isEqual() {
-        if (start == null || end == null) {
-            return true;
-        }
-
-        return !start.isEqual(end);
-    }
 }

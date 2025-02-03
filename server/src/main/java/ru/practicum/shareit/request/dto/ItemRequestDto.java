@@ -14,13 +14,8 @@ import java.util.List;
 @NoArgsConstructor
 public class ItemRequestDto {
     long id;
-
-
     String description;
-
     LocalDateTime created;
-
     List<ItemDto> items;
-
     long userId;
 }

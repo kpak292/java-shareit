@@ -72,7 +72,7 @@ public class BookingController {
 
         return new ResponseEntity<>(
                 booking,
-                HttpStatus.OK);
+                HttpStatus.CREATED);
     }
 
     @PatchMapping("/{bookingId}")
