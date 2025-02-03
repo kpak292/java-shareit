@@ -490,8 +490,8 @@ public class BookingServiceTest {
         assertArrayEquals(List.of(BookingMapper.INSTANCE.getBookingDto(waitingBooking),
                         BookingMapper.INSTANCE.getBookingDto(approvedBooking)).toArray(),
                 result.toArray());
-        verify(mockBookingrepository, Mockito.times(1)).
-                getAllByBookerAndItemAndStatusAndEndBefore(any(User.class),
+        verify(mockBookingrepository, Mockito.times(1))
+                .getAllByBookerAndItemAndStatusAndEndBefore(any(User.class),
                         any(Item.class),
                         any(State.class),
                         any(LocalDateTime.class));
@@ -507,8 +507,8 @@ public class BookingServiceTest {
 
         bookingService.findLastBooking(hostedItemAvailable);
 
-        verify(mockBookingrepository, Mockito.times(1)).
-                findFirstByItemAndStatusAndEndBeforeOrderByEndDesc(
+        verify(mockBookingrepository, Mockito.times(1))
+                .findFirstByItemAndStatusAndEndBeforeOrderByEndDesc(
                         any(Item.class),
                         any(State.class),
                         any(LocalDateTime.class));
@@ -524,8 +524,8 @@ public class BookingServiceTest {
 
         bookingService.findNextBooking(hostedItemAvailable);
 
-        verify(mockBookingrepository, Mockito.times(1)).
-                findFirstByItemAndStatusAndStartAfterOrderByStartAsc(
+        verify(mockBookingrepository, Mockito.times(1))
+                .findFirstByItemAndStatusAndStartAfterOrderByStartAsc(
                         any(Item.class),
                         any(State.class),
                         any(LocalDateTime.class));
