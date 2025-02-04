@@ -130,6 +130,7 @@ public class BookingServiceTest {
 
     }
 
+    //findByUserId - need to be covered by integration tests additionally
     @Test
     public void findAllByUserIdTest() {
         //returning host on user check
@@ -275,6 +276,7 @@ public class BookingServiceTest {
         verifyNoInteractions(mockBookingrepository);
     }
 
+    //findByOwnerId - need to be covered by integration tests additionally
     @Test
     public void findByOwnerIdTest() {
         //returning host on user check
@@ -308,6 +310,8 @@ public class BookingServiceTest {
         verify(mockUserService, Mockito.times(1)).findUserById(Mockito.anyLong());
         verifyNoInteractions(mockBookingrepository);
     }
+
+    //findById Tests
 
     @Test
     public void findByIdTest() {
@@ -345,6 +349,8 @@ public class BookingServiceTest {
         verify(mockBookingrepository, Mockito.times(1)).findById(Mockito.anyLong());
         verifyNoMoreInteractions(mockBookingrepository);
     }
+
+    //create tests
 
     @Test
     public void createTest() {
@@ -419,6 +425,8 @@ public class BookingServiceTest {
         verifyNoMoreInteractions(mockUserService);
     }
 
+    //approve tests
+
     @Test
     public void approveTest() {
         when(mockBookingrepository.findById(Mockito.anyLong()))
@@ -477,6 +485,8 @@ public class BookingServiceTest {
         verifyNoMoreInteractions(mockBookingrepository);
     }
 
+    //findByItemAndUser tests - need to be covered by integration tests additionally
+
     @Test
     public void findByItemAndUserTest() {
         when(mockBookingrepository.getAllByBookerAndItemAndStatusAndEndBefore(any(User.class),
@@ -498,6 +508,7 @@ public class BookingServiceTest {
         verifyNoMoreInteractions(mockBookingrepository);
     }
 
+    //findByLastBooking tests - need to be covered by integration tests additionally
     @Test
     public void findByLastBookingTest() {
         when(mockBookingrepository.findFirstByItemAndStatusAndEndBeforeOrderByEndDesc(any(Item.class),
@@ -515,6 +526,7 @@ public class BookingServiceTest {
         verifyNoMoreInteractions(mockBookingrepository);
     }
 
+    //findByNextBooking tests - need to be covered by integration tests additionally
     @Test
     public void findByNextBookingTest() {
         when(mockBookingrepository.findFirstByItemAndStatusAndStartAfterOrderByStartAsc(any(Item.class),
