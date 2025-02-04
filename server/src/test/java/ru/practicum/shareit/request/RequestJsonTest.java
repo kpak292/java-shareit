@@ -47,7 +47,7 @@ public class RequestJsonTest {
     }
 
     @Test
-    public void ItemRequestJsonTest() throws Exception {
+    public void itemRequestJsonTest() throws Exception {
         LocalDateTime created = LocalDateTime.now();
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss");
 
@@ -81,4 +81,5 @@ public class RequestJsonTest {
         assertThat(content).extractingJsonPathNumberValue("$.items.[0].hostId").isEqualTo(7);
         assertThat(content).extractingJsonPathNumberValue("$.userId").isEqualTo(2);
     }
+
 }
