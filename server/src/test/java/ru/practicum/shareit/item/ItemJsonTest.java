@@ -22,7 +22,7 @@ public class ItemJsonTest {
     private final JacksonTester<ItemDto> json;
 
     @Test
-    public void itemDtoJsonTest() throws Exception {
+    public void itemDtoTest() throws Exception {
         LocalDateTime commentDate = LocalDateTime.now().minusDays(1);
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss");
 

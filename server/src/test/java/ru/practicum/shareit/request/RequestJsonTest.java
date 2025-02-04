@@ -23,7 +23,7 @@ public class RequestJsonTest {
     private final JacksonTester<ItemRequestDto> itemRequestJson;
 
     @Test
-    public void RequestDtoJsonTest() throws Exception {
+    public void requestDtoTest() throws Exception {
         LocalDateTime created = LocalDateTime.now();
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss");
 
