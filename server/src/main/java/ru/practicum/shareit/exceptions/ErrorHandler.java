@@ -23,12 +23,6 @@ public class ErrorHandler {
     }
 
     @ExceptionHandler
-    public ErrorResponse duplicateEmailHandler(final DuplicateEmailException e) {
-        log.error(e.getMessage());
-        return ErrorResponse.create(e, HttpStatus.BAD_REQUEST, e.getMessage());
-    }
-
-    @ExceptionHandler
     public ErrorResponse unauthorizedAccessHandler(final UnauthorizedAccessException e) {
         log.error(e.getMessage());
         return ErrorResponse.create(e, HttpStatus.FORBIDDEN, e.getMessage());
