@@ -1,11 +1,13 @@
 package ru.practicum.shareit.request.entity;
 
+import com.querydsl.core.annotations.QueryExclude;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
 import java.time.LocalDateTime;
 
+@QueryExclude
 @Entity
 @Table(name = "requests", schema = "public")
 @Data
