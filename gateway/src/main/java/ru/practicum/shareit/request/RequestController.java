@@ -19,8 +19,6 @@ public class RequestController {
     @Autowired
     RequestClient requestClient;
 
-    private final String userHeader = "X-Sharer-User-Id";
-
     @GetMapping
     public ResponseEntity<Object> findAllByUser(
             @RequestHeader(Constants.HEADER_FOR_USER_ID) long userId) {
